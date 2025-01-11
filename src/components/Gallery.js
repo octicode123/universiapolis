@@ -1,8 +1,8 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Pagination, Skeleton, Card, CardMedia, CardContent, Button, Box, Grid, Typography } from '@mui/material';
+import { Pagination, Skeleton, Card, CardMedia, CardContent, Button, Box, Grid, Typography, Alert } from '@mui/material';
 import { styled } from '@mui/system';
-import { usePagination } from '../hooks/usePagination'; 
+import { usePagination } from '../hooks/usePagination';
 
 const StyledCard = styled(Card)(({ theme }) => ({
     height: '100%',
@@ -57,55 +57,67 @@ const Gallery = ({ images, isLoading }) => {
         <Box sx={{ p: 4, bgcolor: 'background.paper' }}>
             <Grid container spacing={4}>
                 {isLoading ? renderSkeleton() : (
-                    currentItems.map((image) => (
-                        <Grid item xs={12} sm={6} md={4} lg={3} key={image.id}>
-                            <StyledCard>
-                                <CardMedia
-                                    component="img"
-                                    height="200"
-                                    image={image.webformatURL}
-                                    alt={image.tags}
-                                    sx={{ objectFit: 'cover' }}
-                                />
-                                <CardContent sx={{ flexGrow: 1 }}>
-                                    <Typography variant="h6" fontWeight="bold" color="primary" gutterBottom>
-                                        {image.tags.split(',')[0]}
-                                    </Typography>
-                                    <Typography variant="body2" color="textSecondary" fontStyle="italic">
-                                        {image.tags}
-                                    </Typography>
-                                </CardContent>
-                                <Box sx={{ p: 2 }}>
-                                    <StyledButton
-                                        variant="contained"
-                                        fullWidth
-                                        onClick={() => handleDetailsClick(image.tags.split(',')[0])}
-                                    >
-                                        See Details
-                                    </StyledButton>
-                                </Box>
-                            </StyledCard>
+                    currentItems.length > 0 ? (
+                        currentItems.map((image) => (
+                            <Grid item xs={12} sm={6} md={4} lg={3} key={image.id}>
+                                <StyledCard>
+                                    <CardMedia
+                                        component="img"
+                                        height="200"
+                                        image={image.webformatURL}
+                                        alt={image.tags}
+                                        sx={{ objectFit: 'cover' }}
+                                    />
+                                    <CardContent sx={{ flexGrow: 1 }}>
+                                        <Typography variant="h6" fontWeight="bold" color="primary" gutterBottom>
+                                            {image.tags.split(',')[0]}
+                                        </Typography>
+                                        <Typography variant="body2" color="textSecondary" fontStyle="italic">
+                                            {image.tags}
+                                        </Typography>
+                                    </CardContent>
+                                    <Box sx={{ p: 2 }}>
+                                        <StyledButton
+                                            variant="contained"
+                                            fullWidth
+                                            onClick={() => handleDetailsClick(image.tags.split(',')[0])}
+                                        >
+                                            See Details
+                                        </StyledButton>
+                                    </Box>
+                                </StyledCard>
+                            </Grid>
+                        ))
+                    ) : (
+                        <Grid item xs={12}>
+                            <Alert severity="info" sx={{ width: '100%', textAlign: 'center' }}>
+                            Aucune image trouvée. Veuillez essayer de rechercher autre chose !
+
+                            </Alert>
                         </Grid>
-                    ))
+                    )
                 )}
             </Grid>
-            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2, mb: 4 }}>
-                <Pagination
-                    count={totalPages}
-                    page={currentPage}
-                    onChange={handlePageChange}
-                    color="primary"
-                    sx={{
-                        '& .MuiPaginationItem-root': {
-                            fontSize: '1rem',
-                            '&.Mui-selected': {
-                                fontWeight: 'bold',
-                                transform: 'scale(1.2)',
+
+            {currentItems.length > 0 && (
+                <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2, mb: 4 }}>
+                    <Pagination
+                        count={totalPages}
+                        page={currentPage}
+                        onChange={handlePageChange}
+                        color="primary"
+                        sx={{
+                            '& .MuiPaginationItem-root': {
+                                fontSize: '1rem',
+                                '&.Mui-selected': {
+                                    fontWeight: 'bold',
+                                    transform: 'scale(1.2)',
+                                },
                             },
-                        },
-                    }}
-                />
-            </Box>
+                        }}
+                    />
+                </Box>
+            )}
         </Box>
     );
 };
